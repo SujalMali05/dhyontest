@@ -1,0 +1,202 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Video Security Demo</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background: #f4f4f4;
+      margin: 0;
+      padding: 0;
+    }
+
+    header {
+      background-color: #202020;
+      color: white;
+      text-align: center;
+      padding: 20px 0;
+      box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+    }
+
+    h1 {
+      margin: 0;
+      font-size: 32px;
+    }
+
+    .video-gallery {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+      gap: 30px;
+      padding: 40px;
+      max-width: 1200px;
+      margin: auto;
+    }
+
+    .video-card {
+      background: white;
+      border-radius: 12px;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+      padding: 16px;
+      text-align: center;
+      transition: transform 0.2s;
+    }
+
+    .video-card:hover {
+      transform: translateY(-5px);
+    }
+
+    .video-container {
+      position: relative;
+      width: 100%;
+      padding-top: 56.25%; /* 16:9 Aspect Ratio */
+      background: #000;
+      border-radius: 8px;
+      overflow: hidden;
+    }
+
+    video {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+    }
+
+    .video-title {
+      margin-top: 12px;
+      font-size: 18px;
+      font-weight: bold;
+      color: #333;
+    }
+
+    .error-message {
+      color: #dc3545;
+      padding: 10px;
+      margin-top: 10px;
+      background: #ffe6e6;
+      border-radius: 4px;
+      display: none;
+    }
+
+    .loading {
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      color: white;
+      font-size: 16px;
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <h1>CloudFront Video Showcase</h1>
+  </header>
+
+  <section class="video-gallery">
+    <div class="video-card">
+      <div class="video-container">
+        <video controls crossorigin="use-credentials" preload="metadata">
+          <source src="https://d22si132od0d26.cloudfront.net/video/Video1.mp4" type="video/mp4" />
+          Your browser does not support the video tag.
+        </video>
+        <div class="loading">Loading...</div>
+      </div>
+      <div class="video-title">Video 1</div>
+      <div class="error-message"></div>
+    </div>
+
+    <div class="video-card">
+      <div class="video-container">
+        <video controls crossorigin="use-credentials" preload="metadata">
+          <source src="https://d22si132od0d26.cloudfront.net/video/Video2.mp4" type="video/mp4" />
+          Your browser does not support the video tag.
+        </video>
+        <div class="loading">Loading...</div>
+      </div>
+      <div class="video-title">Video 2</div>
+      <div class="error-message"></div>
+    </div>
+
+    <div class="video-card">
+      <div class="video-container">
+        <video controls crossorigin="use-credentials" preload="metadata">
+          <source src="https://d22si132od0d26.cloudfront.net/video/Video3.mp4" type="video/mp4" />
+          Your browser does not support the video tag.
+        </video>
+        <div class="loading">Loading...</div>
+      </div>
+      <div class="video-title">Video 3</div>
+      <div class="error-message"></div>
+    </div>
+
+    <div class="video-card">
+      <div class="video-container">
+        <video controls crossorigin="use-credentials" preload="metadata">
+          <source src="https://d22si132od0d26.cloudfront.net/video/Video2.mp4" type="video/mp4" />
+          Your browser does not support the video tag.
+        </video>
+        <div class="loading">Loading...</div>
+      </div>
+      <div class="video-title">Video 4</div>
+      <div class="error-message"></div>
+    </div>
+
+    <div class="video-card">
+      <div class="video-container">
+        <video controls crossorigin="use-credentials" preload="metadata">
+          <source src="https://d22si132od0d26.cloudfront.net/video/Video3.mp4" type="video/mp4" />
+          Your browser does not support the video tag.
+        </video>
+        <div class="loading">Loading...</div>
+      </div>
+      <div class="video-title">Video 5</div>
+      <div class="error-message"></div>
+    </div>
+
+    <div class="video-card">
+      <div class="video-container">
+        <video controls crossorigin="use-credentials" preload="metadata">
+          <source src="https://d22si132od0d26.cloudfront.net/video/Video1.mp4" type="video/mp4" />
+          Your browser does not support the video tag.
+        </video>
+        <div class="loading">Loading...</div>
+      </div>
+      <div class="video-title">Video 6</div>
+      <div class="error-message"></div>
+    </div>
+  </section>
+
+  <script>
+    document.addEventListener('DOMContentLoaded', function() {
+      const videos = document.querySelectorAll('video');
+
+      videos.forEach(video => {
+        const container = video.closest('.video-container');
+        const loading = container.querySelector('.loading');
+        const errorMessage = video.closest('.video-card').querySelector('.error-message');
+
+        video.addEventListener('loadeddata', () => {
+          loading.style.display = 'none';
+        });
+
+        video.addEventListener('error', (e) => {
+          loading.style.display = 'none';
+          errorMessage.style.display = 'block';
+          errorMessage.textContent = 'Error loading video. Please try again later.';
+          console.error('Video loading error:', e);
+        });
+
+        // Handle video loading
+        video.addEventListener('loadstart', () => {
+          loading.style.display = 'block';
+        });
+      });
+    });
+  </script>
+</body>
+</html>
+

@@ -1,0 +1,23 @@
+{
+  "name": "cloudfront-signed-cookies",
+  "version": "1.0.0",
+  "description": "Generate signed cookies for AWS CloudFront private content",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [
+    "aws",
+    "cloudfront",
+    "signed-cookies"
+  ],
+  "author": "",
+  "license": "MIT",
+  "engines": {
+    "node": ">=14.0.0"
+  },
+  "dependencies": {
+    "express": "^4.18.2"
+  }
+} 
