@@ -2,199 +2,123 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <title>Video Security Demo</title>
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Secure Video Grid</title>
   <style>
     body {
-      font-family: Arial, sans-serif;
-      background: #f4f4f4;
+      font-family: sans-serif;
+      background-color: #f9f9f9;
       margin: 0;
       padding: 0;
     }
 
     header {
-      background-color: #202020;
-      color: white;
+      background-color: #111;
+      color: #fff;
       text-align: center;
-      padding: 20px 0;
-      box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+      padding: 20px;
+      font-size: 1.5rem;
     }
 
-    h1 {
-      margin: 0;
-      font-size: 32px;
-    }
-
-    .video-gallery {
+    .grid {
       display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-      gap: 30px;
-      padding: 40px;
+      grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
       max-width: 1200px;
-      margin: auto;
+      margin: 20px auto;
+      gap: 20px;
+      padding: 0 20px;
     }
 
     .video-card {
       background: white;
       border-radius: 12px;
-      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
-      padding: 16px;
-      text-align: center;
-      transition: transform 0.2s;
-    }
-
-    .video-card:hover {
-      transform: translateY(-5px);
-    }
-
-    .video-container {
-      position: relative;
-      width: 100%;
-      padding-top: 56.25%; /* 16:9 Aspect Ratio */
-      background: #000;
-      border-radius: 8px;
       overflow: hidden;
+      box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+      text-align: center;
+      padding-bottom: 10px;
     }
 
-    video {
-      position: absolute;
-      top: 0;
-      left: 0;
+    .video-card video {
       width: 100%;
-      height: 100%;
-      object-fit: cover;
+      height: auto;
+      outline: none;
+      -webkit-touch-callout: none;
+      -webkit-user-select: none;
+      -moz-user-select: none;
+      -ms-user-select: none;
+      user-select: none;
     }
 
     .video-title {
-      margin-top: 12px;
-      font-size: 18px;
       font-weight: bold;
-      color: #333;
-    }
-
-    .error-message {
-      color: #dc3545;
-      padding: 10px;
-      margin-top: 10px;
-      background: #ffe6e6;
-      border-radius: 4px;
-      display: none;
-    }
-
-    .loading {
-      position: absolute;
-      top: 50%;
-      left: 50%;
-      transform: translate(-50%, -50%);
-      color: white;
-      font-size: 16px;
+      padding-top: 8px;
     }
   </style>
 </head>
-<body>
-  <header>
-    <h1>CloudFront Video Showcase</h1>
-  </header>
+<body oncontextmenu="return false">
+  <header>Video Security Demo</header>
 
-  <section class="video-gallery">
+  <div class="grid">
     <div class="video-card">
-      <div class="video-container">
-        <video controls crossorigin="use-credentials" preload="metadata">
-          <source src="https://cdn.testyourproject.tech/video/Video1.mp4" type="video/mp4" />
-          Your browser does not support the video tag.
-        </video>
-        <div class="loading">Loading...</div>
-      </div>
+      <video controls controlsList="nodownload" oncontextmenu="return false" preload="metadata">
+        <source src="https://cdn.testyourproject.tech/video/Video1.mp4" type="video/mp4">
+        Your browser does not support the video tag.
+      </video>
       <div class="video-title">Video 1</div>
-      <div class="error-message"></div>
     </div>
-
     <div class="video-card">
-      <div class="video-container">
-        <video controls crossorigin="use-credentials" preload="metadata">
-          <source src="https://cdn.testyourproject.tech/video/Video2.mp4" type="video/mp4" />
-          Your browser does not support the video tag.
-        </video>
-        <div class="loading">Loading...</div>
-      </div>
+      <video controls controlsList="nodownload" oncontextmenu="return false" preload="metadata">
+        <source src="https://cdn.testyourproject.tech/video/Video2.mp4" type="video/mp4">
+        Your browser does not support the video tag.
+      </video>
       <div class="video-title">Video 2</div>
-      <div class="error-message"></div>
     </div>
-
     <div class="video-card">
-      <div class="video-container">
-        <video controls crossorigin="use-credentials" preload="metadata">
-          <source src="https://cdn.testyourproject.tech/video/Video3.mp4" type="video/mp4" />
-          Your browser does not support the video tag.
-        </video>
-        <div class="loading">Loading...</div>
-      </div>
+      <video controls controlsList="nodownload" oncontextmenu="return false" preload="metadata">
+        <source src="https://cdn.testyourproject.tech/video/Video3.mp4" type="video/mp4">
+        Your browser does not support the video tag.
+      </video>
       <div class="video-title">Video 3</div>
-      <div class="error-message"></div>
     </div>
-
     <div class="video-card">
-      <div class="video-container">
-        <video controls crossorigin="use-credentials" preload="metadata">
-          <source src="https://cdn.testyourproject.tech/video/Video2.mp4" type="video/mp4" />
-          Your browser does not support the video tag.
-        </video>
-        <div class="loading">Loading...</div>
-      </div>
+      <video controls controlsList="nodownload" oncontextmenu="return false" preload="metadata">
+        <source src="https://cdn.testyourproject.tech/video/Video4.mp4" type="video/mp4">
+        Your browser does not support the video tag.
+      </video>
       <div class="video-title">Video 4</div>
-      <div class="error-message"></div>
     </div>
-
     <div class="video-card">
-      <div class="video-container">
-        <video controls crossorigin="use-credentials" preload="metadata">
-          <source src="https://cdn.testyourproject.tech/video/Video3.mp4" type="video/mp4" />
-          Your browser does not support the video tag.
-        </video>
-        <div class="loading">Loading...</div>
-      </div>
+      <video controls controlsList="nodownload" oncontextmenu="return false" preload="metadata">
+        <source src="https://cdn.testyourproject.tech/video/Video5.mp4" type="video/mp4">
+        Your browser does not support the video tag.
+      </video>
       <div class="video-title">Video 5</div>
-      <div class="error-message"></div>
     </div>
-
     <div class="video-card">
-      <div class="video-container">
-        <video controls crossorigin="use-credentials" preload="metadata">
-          <source src="https://cdn.testyourproject.tech/video/Video1.mp4" type="video/mp4" />
-          Your browser does not support the video tag.
-        </video>
-        <div class="loading">Loading...</div>
-      </div>
+      <video controls controlsList="nodownload" oncontextmenu="return false" preload="metadata">
+        <source src="https://cdn.testyourproject.tech/video/Video6.mp4" type="video/mp4">
+        Your browser does not support the video tag.
+      </video>
       <div class="video-title">Video 6</div>
-      <div class="error-message"></div>
     </div>
-  </section>
+  </div>
 
   <script>
-    document.addEventListener('DOMContentLoaded', function() {
-      const videos = document.querySelectorAll('video');
+    // Disable F12, Ctrl+S, Ctrl+U, Ctrl+Shift+I
+    document.addEventListener('keydown', function(e) {
+      if (
+        e.keyCode === 123 || // F12
+        (e.ctrlKey && e.shiftKey && (e.keyCode === 73 || e.keyCode === 74)) || // Ctrl+Shift+I/J
+        (e.ctrlKey && (e.keyCode === 83 || e.keyCode === 85)) // Ctrl+S/U
+      ) {
+        e.preventDefault();
+        return false;
+      }
+    });
 
-      videos.forEach(video => {
-        const container = video.closest('.video-container');
-        const loading = container.querySelector('.loading');
-        const errorMessage = video.closest('.video-card').querySelector('.error-message');
-
-        video.addEventListener('loadeddata', () => {
-          loading.style.display = 'none';
-        });
-
-        video.addEventListener('error', (e) => {
-          loading.style.display = 'none';
-          errorMessage.style.display = 'block';
-          errorMessage.textContent = 'Error loading video. Please try again later.';
-          console.error('Video loading error:', e);
-        });
-
-        // Handle video loading
-        video.addEventListener('loadstart', () => {
-          loading.style.display = 'block';
-        });
-      });
+    // Disable right-click on all videos (extra layer)
+    document.querySelectorAll("video").forEach(video => {
+      video.addEventListener("contextmenu", e => e.preventDefault());
     });
   </script>
 </body>
