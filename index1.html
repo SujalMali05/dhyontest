@@ -2,8 +2,9 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Secure Video Grid</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Video Security Demo</title>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/shaka-player/4.6.0/shaka-player.compiled.js"></script>
   <style>
     body {
       font-family: sans-serif;
@@ -11,7 +12,6 @@
       margin: 0;
       padding: 0;
     }
-
     header {
       background-color: #111;
       color: #fff;
@@ -19,7 +19,13 @@
       padding: 20px;
       font-size: 1.5rem;
     }
-
+    .info-bar {
+      background: #f1f1f1;
+      padding: 1rem;
+      border-left: 4px solid #2196F3;
+      margin: 1rem auto;
+      max-width: 1200px;
+    }
     .grid {
       display: grid;
       grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
@@ -28,7 +34,6 @@
       gap: 20px;
       padding: 0 20px;
     }
-
     .video-card {
       background: white;
       border-radius: 12px;
@@ -37,90 +42,136 @@
       text-align: center;
       padding-bottom: 10px;
     }
-
     .video-card video {
       width: 100%;
       height: auto;
       outline: none;
-      -webkit-touch-callout: none;
-      -webkit-user-select: none;
-      -moz-user-select: none;
-      -ms-user-select: none;
       user-select: none;
     }
-
     .video-title {
       font-weight: bold;
       padding-top: 8px;
     }
   </style>
 </head>
+
 <body oncontextmenu="return false">
   <header>Video Security Demo</header>
 
-  <div class="grid">
-    <div class="video-card">
-      <video controls controlsList="nodownload" oncontextmenu="return false" preload="metadata">
-        <source src="https://cdn.testyourproject.tech/video/Video1.mp4" type="video/mp4">
-        Your browser does not support the video tag.
-      </video>
-      <div class="video-title">Video 1</div>
-    </div>
-    <div class="video-card">
-      <video controls controlsList="nodownload" oncontextmenu="return false" preload="metadata">
-        <source src="https://cdn.testyourproject.tech/video/Video2.mp4" type="video/mp4">
-        Your browser does not support the video tag.
-      </video>
-      <div class="video-title">Video 2</div>
-    </div>
-    <div class="video-card">
-      <video controls controlsList="nodownload" oncontextmenu="return false" preload="metadata">
-        <source src="https://cdn.testyourproject.tech/video/Video3.mp4" type="video/mp4">
-        Your browser does not support the video tag.
-      </video>
-      <div class="video-title">Video 3</div>
-    </div>
-    <div class="video-card">
-      <video controls controlsList="nodownload" oncontextmenu="return false" preload="metadata">
-        <source src="https://cdn.testyourproject.tech/video/Video4.mp4" type="video/mp4">
-        Your browser does not support the video tag.
-      </video>
-      <div class="video-title">Video 4</div>
-    </div>
-    <div class="video-card">
-      <video controls controlsList="nodownload" oncontextmenu="return false" preload="metadata">
-        <source src="https://cdn.testyourproject.tech/video/Video5.mp4" type="video/mp4">
-        Your browser does not support the video tag.
-      </video>
-      <div class="video-title">Video 5</div>
-    </div>
-    <div class="video-card">
-      <video controls controlsList="nodownload" oncontextmenu="return false" preload="metadata">
-        <source src="https://cdn.testyourproject.tech/video/Video6.mp4" type="video/mp4">
-        Your browser does not support the video tag.
-      </video>
-      <div class="video-title">Video 6</div>
-    </div>
+  <div class="info-bar">
+    <strong>Streaming Format:</strong> <span id="format">Detecting...</span><br />
+    <strong>Browser:</strong> <span id="ua"></span>
   </div>
 
-  <script>
-    // Disable F12, Ctrl+S, Ctrl+U, Ctrl+Shift+I
-    document.addEventListener('keydown', function(e) {
-      if (
-        e.keyCode === 123 || // F12
-        (e.ctrlKey && e.shiftKey && (e.keyCode === 73 || e.keyCode === 74)) || // Ctrl+Shift+I/J
-        (e.ctrlKey && (e.keyCode === 83 || e.keyCode === 85)) // Ctrl+S/U
-      ) {
-        e.preventDefault();
-        return false;
-      }
-    });
+  <div class="grid" id="videoGrid"></div>
 
-    // Disable right-click on all videos (extra layer)
-    document.querySelectorAll("video").forEach(video => {
-      video.addEventListener("contextmenu", e => e.preventDefault());
-    });
+  <script>
+    const videoSources = [
+      {
+        title: "Video 1",
+        dash: "https://cdn.testyourproject.tech/drm/Video1.mpd"
+      },
+      {
+        title: "Video 2",
+        dash: "https://cdn.testyourproject.tech/drm/Video2.mpd"
+      },
+      {
+        title: "Video 3",
+        dash: "https://cdn.testyourproject.tech/drm/Video3.mpd"
+      },
+      {
+        title: "Video 4",
+        dash: "https://cdn.testyourproject.tech/drm/Video4.mpd"
+      },
+      {
+        title: "Video 5",
+        dash: "https://cdn.testyourproject.tech/drm/Video5.mpd"
+      },
+      {
+        title: "Video 6",
+        dash: "https://cdn.testyourproject.tech/drm/Video6.mpd"
+      }
+    ];
+
+    const uaSpan = document.getElementById('ua');
+    const formatSpan = document.getElementById('format');
+    const videoGrid = document.getElementById('videoGrid');
+
+    function getBrowser() {
+      const ua = navigator.userAgent;
+      if (/Edg\//.test(ua)) return "Microsoft Edge";
+      if (/Chrome\//.test(ua) && !/Edg\//.test(ua)) return "Google Chrome";
+      if (/Safari\//.test(ua) && !/Chrome\//.test(ua)) return "Safari";
+      if (/Firefox\//.test(ua)) return "Mozilla Firefox";
+      return "Unknown Browser";
+    }
+
+    async function loadDRMShaka(video, dashUrl, index) {
+      try {
+        const player = new shaka.Player(video);
+
+        // ✅ Enable signed cookie support
+        const networkingEngine = player.getNetworkingEngine();
+        networkingEngine.registerRequestFilter((type, request) => {
+          if (
+            type === shaka.net.NetworkingEngine.RequestType.MANIFEST ||
+            type === shaka.net.NetworkingEngine.RequestType.SEGMENT
+          ) {
+            request.allowCrossSiteCredentials = true;
+          }
+        });
+
+        // ✅ DRM configuration
+        player.configure({
+          drm: {
+            servers: {
+              'com.widevine.alpha': 'https://widevine-dash.ezdrm.com/widevine-php/widevine-foreignkey.php?pX=A42E3C',
+              'com.microsoft.playready': 'https://playready.ezdrm.com/cency/preauth.aspx?pX=AD538D'
+            },
+            advanced: {
+              'com.widevine.alpha': {
+                videoRobustness: 'SW_SECURE_CRYPTO'
+              },
+              'com.microsoft.playready': {
+                videoRobustness: 'SW_SECURE_DECODE'
+              }
+            }
+          }
+        });
+
+        await player.load(dashUrl);
+        if (index === 0) formatSpan.textContent = "MPEG-DASH + DRM (Shaka)";
+        console.log(" DRM stream loaded successfully.");
+      } catch (error) {
+        console.error(" DRM Shaka Error:", error);
+        formatSpan.textContent = " Playback failed";
+      }
+    }
+
+    function createVideoCard({ title, dash }, index) {
+      const wrapper = document.createElement('div');
+      wrapper.className = 'video-card';
+
+      const video = document.createElement('video');
+      video.controls = true;
+      video.setAttribute('controlsList', 'nodownload');
+      video.setAttribute('oncontextmenu', 'return false');
+      video.setAttribute('preload', 'metadata');
+
+      const titleEl = document.createElement('div');
+      titleEl.className = 'video-title';
+      titleEl.textContent = title;
+
+      wrapper.appendChild(video);
+      wrapper.appendChild(titleEl);
+      videoGrid.appendChild(wrapper);
+
+      loadDRMShaka(video, dash, index);
+    }
+
+    shaka.polyfill.installAll();
+    uaSpan.textContent = getBrowser();
+    videoSources.forEach(createVideoCard);
   </script>
 </body>
 </html>
-
