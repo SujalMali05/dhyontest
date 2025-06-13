@@ -66,112 +66,122 @@
   <div class="grid" id="videoGrid"></div>
 
   <script>
-    const videoSources = [
-      {
-        title: "Video 1",
-        dash: "https://cdn.testyourproject.tech/drm/Video1.mpd"
-      },
-      {
-        title: "Video 2",
-        dash: "https://cdn.testyourproject.tech/drm/Video2.mpd"
-      },
-      {
-        title: "Video 3",
-        dash: "https://cdn.testyourproject.tech/drm/Video3.mpd"
-      },
-      {
-        title: "Video 4",
-        dash: "https://cdn.testyourproject.tech/drm/Video4.mpd"
-      },
-      {
-        title: "Video 5",
-        dash: "https://cdn.testyourproject.tech/drm/Video5.mpd"
-      },
-      {
-        title: "Video 6",
-        dash: "https://cdn.testyourproject.tech/drm/Video6.mpd"
-      }
-    ];
-
-    const uaSpan = document.getElementById('ua');
-    const formatSpan = document.getElementById('format');
-    const videoGrid = document.getElementById('videoGrid');
-
-    function getBrowser() {
-      const ua = navigator.userAgent;
-      if (/Edg\//.test(ua)) return "Microsoft Edge";
-      if (/Chrome\//.test(ua) && !/Edg\//.test(ua)) return "Google Chrome";
-      if (/Safari\//.test(ua) && !/Chrome\//.test(ua)) return "Safari";
-      if (/Firefox\//.test(ua)) return "Mozilla Firefox";
-      return "Unknown Browser";
+  const videoSources = [
+    {
+      title: "Video 1",
+      dash: "https://cdn.testyourproject.tech/drm/Video1.mpd"
+    },
+    {
+      title: "Video 2",
+      dash: "https://cdn.testyourproject.tech/drm/Video2.mpd"
+    },
+    {
+      title: "Video 3",
+      dash: "https://cdn.testyourproject.tech/drm/Video3.mpd"
+    },
+    {
+      title: "Video 4",
+      dash: "https://cdn.testyourproject.tech/drm/Video4.mpd"
+    },
+    {
+      title: "Video 5",
+      dash: "https://cdn.testyourproject.tech/drm/Video5.mpd"
+    },
+    {
+      title: "Video 6",
+      dash: "https://cdn.testyourproject.tech/drm/Video6.mpd"
     }
+  ];
 
-    async function loadDRMShaka(video, dashUrl, index) {
-      try {
-        const player = new shaka.Player(video);
+  const uaSpan = document.getElementById('ua');
+  const formatSpan = document.getElementById('format');
+  const videoGrid = document.getElementById('videoGrid');
 
-        // ✅ Enable signed cookie support
-        const networkingEngine = player.getNetworkingEngine();
-        networkingEngine.registerRequestFilter((type, request) => {
-          if (
-            type === shaka.net.NetworkingEngine.RequestType.MANIFEST ||
-            type === shaka.net.NetworkingEngine.RequestType.SEGMENT
-          ) {
-            request.allowCrossSiteCredentials = true;
-          }
-        });
+  const allVideos = [];  // ⭐ Keep reference to all video elements
 
-        // ✅ DRM configuration
-        player.configure({
-          drm: {
-            servers: {
-              'com.widevine.alpha': 'https://widevine-dash.ezdrm.com/widevine-php/widevine-foreignkey.php?pX=A42E3C',
-              'com.microsoft.playready': 'https://playready.ezdrm.com/cency/preauth.aspx?pX=AD538D'
+  function getBrowser() {
+    const ua = navigator.userAgent;
+    if (/Edg\//.test(ua)) return "Microsoft Edge";
+    if (/Chrome\//.test(ua) && !/Edg\//.test(ua)) return "Google Chrome";
+    if (/Safari\//.test(ua) && !/Chrome\//.test(ua)) return "Safari";
+    if (/Firefox\//.test(ua)) return "Mozilla Firefox";
+    return "Unknown Browser";
+  }
+
+  async function loadDRMShaka(video, dashUrl, index) {
+    try {
+      const player = new shaka.Player(video);
+
+      const networkingEngine = player.getNetworkingEngine();
+      networkingEngine.registerRequestFilter((type, request) => {
+        if (
+          type === shaka.net.NetworkingEngine.RequestType.MANIFEST ||
+          type === shaka.net.NetworkingEngine.RequestType.SEGMENT
+        ) {
+          request.allowCrossSiteCredentials = true;
+        }
+      });
+
+      player.configure({
+        drm: {
+          servers: {
+            'com.widevine.alpha': 'https://widevine-dash.ezdrm.com/widevine-php/widevine-foreignkey.php?pX=A42E3C',
+            'com.microsoft.playready': 'https://playready.ezdrm.com/cency/preauth.aspx?pX=AD538D'
+          },
+          advanced: {
+            'com.widevine.alpha': {
+              videoRobustness: 'SW_SECURE_CRYPTO'
             },
-            advanced: {
-              'com.widevine.alpha': {
-                videoRobustness: 'SW_SECURE_CRYPTO'
-              },
-              'com.microsoft.playready': {
-                videoRobustness: 'SW_SECURE_DECODE'
-              }
+            'com.microsoft.playready': {
+              videoRobustness: 'SW_SECURE_DECODE'
             }
           }
-        });
+        }
+      });
 
-        await player.load(dashUrl);
-        if (index === 0) formatSpan.textContent = "MPEG-DASH + DRM (Shaka)";
-        console.log(" DRM stream loaded successfully.");
-      } catch (error) {
-        console.error(" DRM Shaka Error:", error);
-        formatSpan.textContent = " Playback failed";
-      }
+      await player.load(dashUrl);
+      if (index === 0) formatSpan.textContent = "MPEG-DASH + DRM (Shaka)";
+      console.log(" DRM stream loaded successfully.");
+    } catch (error) {
+      console.error(" DRM Shaka Error:", error);
+      formatSpan.textContent = " Playback failed";
     }
+  }
 
-    function createVideoCard({ title, dash }, index) {
-      const wrapper = document.createElement('div');
-      wrapper.className = 'video-card';
+  function createVideoCard({ title, dash }, index) {
+    const wrapper = document.createElement('div');
+    wrapper.className = 'video-card';
 
-      const video = document.createElement('video');
-      video.controls = true;
-      video.setAttribute('controlsList', 'nodownload');
-      video.setAttribute('oncontextmenu', 'return false');
-      video.setAttribute('preload', 'metadata');
+    const video = document.createElement('video');
+    video.controls = true;
+    video.setAttribute('controlsList', 'nodownload');
+    video.setAttribute('oncontextmenu', 'return false');
+    video.setAttribute('preload', 'metadata');
 
-      const titleEl = document.createElement('div');
-      titleEl.className = 'video-title';
-      titleEl.textContent = title;
+    // ⭐ Pause other videos when one starts
+    video.addEventListener('play', () => {
+      allVideos.forEach(v => {
+        if (v !== video) v.pause();
+      });
+    });
 
-      wrapper.appendChild(video);
-      wrapper.appendChild(titleEl);
-      videoGrid.appendChild(wrapper);
+    allVideos.push(video); // ⭐ Track this video
 
-      loadDRMShaka(video, dash, index);
-    }
+    const titleEl = document.createElement('div');
+    titleEl.className = 'video-title';
+    titleEl.textContent = title;
 
-    shaka.polyfill.installAll();
-    uaSpan.textContent = getBrowser();
-    videoSources.forEach(createVideoCard);
-  </script>
+    wrapper.appendChild(video);
+    wrapper.appendChild(titleEl);
+    videoGrid.appendChild(wrapper);
+
+    loadDRMShaka(video, dash, index);
+  }
+
+  shaka.polyfill.installAll();
+  uaSpan.textContent = getBrowser();
+  videoSources.forEach(createVideoCard);
+</script>
+
 </body>
 </html>
